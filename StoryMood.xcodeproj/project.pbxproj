@@ -1,0 +1,384 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA000001 /* StoryMoodApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100001 /* StoryMoodApp.swift */; };
+		AA000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100002 /* ContentView.swift */; };
+		AA000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA100003 /* Assets.xcassets */; };
+		AA000004 /* SoundEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100004 /* SoundEffect.swift */; };
+		AA000005 /* SoundCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100005 /* SoundCategory.swift */; };
+		AA000006 /* SoundLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100006 /* SoundLibrary.swift */; };
+		AA000007 /* SoundButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100007 /* SoundButtonView.swift */; };
+		AA000008 /* CategoryTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100008 /* CategoryTabView.swift */; };
+		AA000009 /* SoundGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100009 /* SoundGridView.swift */; };
+		AA000010 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100010 /* AudioManager.swift */; };
+		AA000011 /* FairyTaleReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100011 /* FairyTaleReference.swift */; };
+		AA000012 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100012 /* HeaderView.swift */; };
+		AA000013 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100013 /* NowPlayingView.swift */; };
+		AA000014 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = AA100014 /* Sounds */; };
+		AA000015 /* SoundMood.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100015 /* SoundMood.swift */; };
+		AA000016 /* SoundImages in Resources */ = {isa = PBXBuildFile; fileRef = AA100016 /* SoundImages */; };
+		AA000017 /* StoryScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100017 /* StoryScript.swift */; };
+		AA000018 /* StoryModeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100018 /* StoryModeManager.swift */; };
+		AA000019 /* StoryModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100019 /* StoryModeView.swift */; };
+		AA000020 /* StoryCustomizationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100020 /* StoryCustomizationStore.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA100001 /* StoryMoodApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryMoodApp.swift; sourceTree = "<group>"; };
+		AA100002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA100003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA100004 /* SoundEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffect.swift; sourceTree = "<group>"; };
+		AA100005 /* SoundCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundCategory.swift; sourceTree = "<group>"; };
+		AA100006 /* SoundLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundLibrary.swift; sourceTree = "<group>"; };
+		AA100007 /* SoundButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundButtonView.swift; sourceTree = "<group>"; };
+		AA100008 /* CategoryTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTabView.swift; sourceTree = "<group>"; };
+		AA100009 /* SoundGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundGridView.swift; sourceTree = "<group>"; };
+		AA100010 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		AA100011 /* FairyTaleReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FairyTaleReference.swift; sourceTree = "<group>"; };
+		AA100012 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
+		AA100013 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
+		AA100014 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
+		AA100015 /* SoundMood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundMood.swift; sourceTree = "<group>"; };
+		AA100016 /* SoundImages */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SoundImages; sourceTree = "<group>"; };
+		AA100017 /* StoryScript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryScript.swift; sourceTree = "<group>"; };
+		AA100020 /* StoryCustomizationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCustomizationStore.swift; sourceTree = "<group>"; };
+		AA100018 /* StoryModeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryModeManager.swift; sourceTree = "<group>"; };
+		AA100019 /* StoryModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryModeView.swift; sourceTree = "<group>"; };
+		AA200001 /* StoryMood.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoryMood.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA200002 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA300001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA400001 = {
+			isa = PBXGroup;
+			children = (
+				AA400002 /* StoryMood */,
+				AA400006 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA400002 /* StoryMood */ = {
+			isa = PBXGroup;
+			children = (
+				AA100001 /* StoryMoodApp.swift */,
+				AA100002 /* ContentView.swift */,
+				AA400003 /* Models */,
+				AA400004 /* Views */,
+				AA400005 /* ViewModels */,
+				AA100003 /* Assets.xcassets */,
+				AA100014 /* Sounds */,
+				AA100016 /* SoundImages */,
+				AA400007 /* Preview Content */,
+			);
+			path = StoryMood;
+			sourceTree = "<group>";
+		};
+		AA400003 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AA100004 /* SoundEffect.swift */,
+				AA100005 /* SoundCategory.swift */,
+				AA100006 /* SoundLibrary.swift */,
+				AA100011 /* FairyTaleReference.swift */,
+				AA100015 /* SoundMood.swift */,
+				AA100017 /* StoryScript.swift */,
+				AA100020 /* StoryCustomizationStore.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AA400004 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA100007 /* SoundButtonView.swift */,
+				AA100008 /* CategoryTabView.swift */,
+				AA100009 /* SoundGridView.swift */,
+				AA100012 /* HeaderView.swift */,
+				AA100013 /* NowPlayingView.swift */,
+				AA100019 /* StoryModeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AA400005 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AA100010 /* AudioManager.swift */,
+				AA100018 /* StoryModeManager.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA400006 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA200001 /* StoryMood.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA400007 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				AA200002 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA500001 /* StoryMood */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA700002 /* Build configuration list for PBXNativeTarget "StoryMood" */;
+			buildPhases = (
+				AA600001 /* Sources */,
+				AA300001 /* Frameworks */,
+				AA600002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StoryMood;
+			productName = StoryMood;
+			productReference = AA200001 /* StoryMood.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA500002 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					AA500001 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = AA700001 /* Build configuration list for PBXProject "StoryMood" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = ko;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				ko,
+				Base,
+			);
+			mainGroup = AA400001;
+			productRefGroup = AA400006 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA500001 /* StoryMood */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA600002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000003 /* Assets.xcassets in Resources */,
+				AA000014 /* Sounds in Resources */,
+				AA000016 /* SoundImages in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA600001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001 /* StoryMoodApp.swift in Sources */,
+				AA000002 /* ContentView.swift in Sources */,
+				AA000004 /* SoundEffect.swift in Sources */,
+				AA000005 /* SoundCategory.swift in Sources */,
+				AA000006 /* SoundLibrary.swift in Sources */,
+				AA000007 /* SoundButtonView.swift in Sources */,
+				AA000008 /* CategoryTabView.swift in Sources */,
+				AA000009 /* SoundGridView.swift in Sources */,
+				AA000010 /* AudioManager.swift in Sources */,
+				AA000011 /* FairyTaleReference.swift in Sources */,
+				AA000012 /* HeaderView.swift in Sources */,
+				AA000013 /* NowPlayingView.swift in Sources */,
+				AA000015 /* SoundMood.swift in Sources */,
+				AA000017 /* StoryScript.swift in Sources */,
+				AA000018 /* StoryModeManager.swift in Sources */,
+				AA000019 /* StoryModeView.swift in Sources */,
+				AA000020 /* StoryCustomizationStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA800001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA800002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AA800003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"StoryMood/Preview Content\"";
+				DEVELOPMENT_TEAM = QGAQ3AY3R3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "이야기 무드";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "이야기 모드에서 큐 사인을 감지하기 위해 마이크를 사용합니다.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "이야기의 큐 단어를 인식하여 자동으로 효과음을 재생합니다.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gaebalja.StoryMood;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AA800004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"StoryMood/Preview Content\"";
+				DEVELOPMENT_TEAM = QGAQ3AY3R3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "이야기 무드";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "이야기 모드에서 큐 사인을 감지하기 위해 마이크를 사용합니다.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "이야기의 큐 단어를 인식하여 자동으로 효과음을 재생합니다.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gaebalja.StoryMood;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA700001 /* Build configuration list for PBXProject "StoryMood" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA800001 /* Debug */,
+				AA800002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA700002 /* Build configuration list for PBXNativeTarget "StoryMood" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA800003 /* Debug */,
+				AA800004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA500002 /* Project object */;
+}
