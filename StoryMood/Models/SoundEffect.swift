@@ -25,17 +25,28 @@ struct SoundEffect: Identifiable, Hashable {
         return SoundMood.allMoods.first(where: { $0.id == firstID })?.color ?? .gray
     }
 
-    /// Check if audio file exists in bundle (Sounds/ subdirectory or root)
-    static func checkAudioExists(fileName: String) -> Bool {
-        let extensions = ["mp3", "wav", "m4a", "aac", "caf"]
-        for ext in extensions {
-            if Bundle.main.url(forResource: fileName, withExtension: ext, subdirectory: "Sounds") != nil {
-                return true
-            }
-            if Bundle.main.url(forResource: fileName, withExtension: ext) != nil {
-                return true
+    /// 번들 내 모든 오디오 파일 URL을 1회 스캔해 캐시 (fileName → URL)
+    /// 확장자 우선순위: mp3 > wav > m4a > aac > caf, 같은 확장자면 Sounds/ 우선
+    static let audioURLByFileName: [String: URL] = {
+        var map: [String: URL] = [:]
+        for ext in ["mp3", "wav", "m4a", "aac", "caf"] {
+            let urls = (Bundle.main.urls(forResourcesWithExtension: ext, subdirectory: "Sounds") ?? [])
+                     + (Bundle.main.urls(forResourcesWithExtension: ext, subdirectory: nil) ?? [])
+            for url in urls {
+                let name = url.deletingPathExtension().lastPathComponent
+                if map[name] == nil { map[name] = url }
             }
         }
-        return false
+        return map
+    }()
+
+    /// Audio file URL for playback (cached lookup)
+    static func audioURL(for fileName: String) -> URL? {
+        audioURLByFileName[fileName]
+    }
+
+    /// Check if audio file exists in bundle (Sounds/ subdirectory or root)
+    static func checkAudioExists(fileName: String) -> Bool {
+        audioURLByFileName[fileName] != nil
     }
 }

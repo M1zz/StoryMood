@@ -66,6 +66,8 @@ SOUNDS = [
     ("duck_quack",       "꽥꽥 오리",            ["duck quack", "duck sound"]),
     ("cricket_chirp",    "귀뚜르 귀뚜라미",      ["cricket chirp", "crickets night"]),
     ("bee_buzz",         "윙윙 벌",              ["bee buzz", "bee buzzing"]),
+    ("goat_bleat",       "매애 아기 염소",       ["goat bleat", "little goat bleating"]),
+    ("hen_cluck",        "꼬꼬댁 암탉",          ["hen cluck", "chicken clucking"]),
 
     # 🌊 바다와 물
     ("ocean_waves",      "파도 소리",            ["ocean waves", "waves crashing beach"]),
@@ -140,6 +142,7 @@ SOUNDS = [
     ("shield_block",     "탕 방패 막기",         ["shield block", "metal shield impact"]),
     ("explosion",        "펑 폭발",              ["explosion", "boom blast"]),
     ("map_unroll",       "바스락 지도 펼치기",   ["paper unroll", "parchment scroll"]),
+    ("axe_chop",         "쿵 도끼질",            ["axe chop wood", "wood chopping axe"]),
 
     # 🐴 이동수단
     ("horse_gallop",     "따그닥 말 달리기",     ["horse gallop", "horse hooves galloping"]),

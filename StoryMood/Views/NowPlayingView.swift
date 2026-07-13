@@ -12,8 +12,11 @@ struct NowPlayingView: View {
                 Text(sound.emoji)
                     .font(.title2)
                     .scaleEffect(isPlaying ? 1.15 : 1.0)
+                    // 정지 시에는 단발 애니메이션 — repeatForever가 정지 후에도 남는 버그 방지
                     .animation(
-                        .easeInOut(duration: 0.5).repeatForever(autoreverses: true),
+                        isPlaying
+                            ? .easeInOut(duration: 0.5).repeatForever(autoreverses: true)
+                            : .easeInOut(duration: 0.2),
                         value: isPlaying
                     )
                 

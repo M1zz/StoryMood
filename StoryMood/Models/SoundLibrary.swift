@@ -7,8 +7,9 @@ import Foundation
 struct SoundLibrary {
     
     static let shared = SoundLibrary()
-    
+
     let allSounds: [SoundEffect]
+    let soundsByID: [String: SoundEffect]
     
     init() {
         var sounds: [SoundEffect] = []
@@ -174,6 +175,14 @@ struct SoundLibrary {
             SoundEffect(id: "bee_buzz", nameKo: "윙윙 (벌)", nameEn: "Bee Buzz", emoji: "🐝", fileName: "bee_buzz", categoryID: "animals",
                 relatedTales: ["곰돌이 푸", "엄지공주"],
                 hasAudioFile: SoundEffect.checkAudioExists(fileName: "bee_buzz")),
+
+            SoundEffect(id: "goat_bleat", nameKo: "매애 (아기 염소)", nameEn: "Goat Bleat", emoji: "🐐", fileName: "goat_bleat", categoryID: "animals",
+                relatedTales: ["늑대와 일곱 마리 아기 염소", "아기 염소 삼형제"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "goat_bleat")),
+
+            SoundEffect(id: "hen_cluck", nameKo: "꼬꼬댁 (암탉)", nameEn: "Hen Cluck", emoji: "🐔", fileName: "hen_cluck", categoryID: "animals",
+                relatedTales: ["잭과 콩나무", "황금알을 낳는 거위", "빨간 암탉"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "hen_cluck")),
         ])
         
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -449,6 +458,10 @@ struct SoundLibrary {
             SoundEffect(id: "map_unroll", nameKo: "바스락 (지도 펼치기)", nameEn: "Map Unroll", emoji: "🗺️", fileName: "map_unroll", categoryID: "adventure_action",
                 relatedTales: ["보물섬", "피터팬", "신밧드의 모험"],
                 hasAudioFile: SoundEffect.checkAudioExists(fileName: "map_unroll")),
+
+            SoundEffect(id: "axe_chop", nameKo: "쿵! (도끼질)", nameEn: "Axe Chop", emoji: "🪓", fileName: "axe_chop", categoryID: "adventure_action",
+                relatedTales: ["잭과 콩나무", "금도끼 은도끼", "아기 돼지 삼형제"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "axe_chop")),
         ])
         
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -641,6 +654,7 @@ struct SoundLibrary {
         ])
         
         self.allSounds = sounds
+        self.soundsByID = Dictionary(sounds.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
     
     /// Get sounds for a specific category

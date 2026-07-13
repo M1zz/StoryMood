@@ -4,16 +4,22 @@ struct ContentView: View {
     @State private var audioManager = AudioManager()
 
     var body: some View {
+        // 이 앱의 정체성은 "이야기를 읽어 주면 알맞은 타이밍에 효과음이 나는 도구"
+        // — 이야기가 첫 화면, 효과음 보드는 보조 도구
         TabView {
-            SoundLibraryView(audioManager: audioManager)
-                .tabItem {
-                    Label("소리 모음", systemImage: "music.note.list")
-                }
-
             StoryModeView(audioManager: audioManager)
                 .tabItem {
-                    Label("이야기 모드", systemImage: "book.fill")
+                    Label("이야기", systemImage: "book.fill")
                 }
+
+            SoundLibraryView(audioManager: audioManager)
+                .tabItem {
+                    Label("효과음 보드", systemImage: "music.note.list")
+                }
+        }
+        .onAppear {
+            // 공연 중 화면 자동 잠금 방지
+            UIApplication.shared.isIdleTimerDisabled = true
         }
     }
 }

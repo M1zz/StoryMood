@@ -1,5 +1,19 @@
 import SwiftUI
 
+/// 버튼 배경 이미지를 1회만 로드해 재사용 — 렌더링마다 디스크 I/O + JPEG 디코딩 방지
+@MainActor
+enum SoundImageCache {
+    private static var cache: [String: UIImage?] = [:]
+
+    static func image(for fileName: String) -> UIImage? {
+        if let cached = cache[fileName] { return cached }
+        let url = Bundle.main.url(forResource: fileName, withExtension: "jpg", subdirectory: "SoundImages")
+        let image = url.flatMap { UIImage(contentsOfFile: $0.path) }
+        cache[fileName] = image
+        return image
+    }
+}
+
 struct SoundButtonView: View {
     let sound: SoundEffect
     let isPlaying: Bool
@@ -13,12 +27,7 @@ struct SoundButtonView: View {
     }
 
     private var backgroundImage: UIImage? {
-        guard let url = Bundle.main.url(
-            forResource: sound.fileName,
-            withExtension: "jpg",
-            subdirectory: "SoundImages"
-        ) else { return nil }
-        return UIImage(contentsOfFile: url.path)
+        SoundImageCache.image(for: sound.fileName)
     }
 
     var body: some View {
@@ -62,7 +71,13 @@ struct SoundButtonView: View {
                     Text(sound.emoji)
                         .font(.system(size: 22))
                         .scaleEffect(isPlaying ? 1.15 : 1.0)
-                        .animation(.easeInOut(duration: 0.4).repeatForever(autoreverses: true), value: isPlaying)
+                        // 정지 시에는 단발 애니메이션 — repeatForever가 정지 후에도 남는 버그 방지
+                        .animation(
+                            isPlaying
+                                ? .easeInOut(duration: 0.4).repeatForever(autoreverses: true)
+                                : .easeInOut(duration: 0.2),
+                            value: isPlaying
+                        )
 
                     Text(sound.nameKo)
                         .font(.system(size: 10, weight: .semibold, design: .rounded))

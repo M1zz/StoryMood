@@ -107,6 +107,8 @@ struct SoundMood: Identifiable, Hashable {
         "duck_quack":       ["cozy_warm", "nature_wild"],
         "cricket_chirp":    ["nature_wild", "dark_spooky"],
         "bee_buzz":         ["nature_wild", "cozy_warm"],
+        "goat_bleat":       ["cozy_warm", "nature_wild"],
+        "hen_cluck":        ["cozy_warm"],
 
         // 🌊 바다와 물
         "ocean_waves":          ["nature_wild"],
@@ -181,6 +183,7 @@ struct SoundMood: Identifiable, Hashable {
         "shield_block":     ["bright_adventure", "grand_kingdom"],
         "explosion":        ["bright_adventure"],
         "map_unroll":       ["bright_adventure"],
+        "axe_chop":         ["bright_adventure", "nature_wild"],
 
         // 🐴 이동수단
         "horse_gallop":     ["bright_adventure", "grand_kingdom"],
