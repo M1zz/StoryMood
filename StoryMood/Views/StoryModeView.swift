@@ -189,6 +189,8 @@ struct StoryDetailView: View {
             }
             .onAppear {
                 isLandscapeWindow = geo.size.width > geo.size.height
+                // 시작 전에도 대본이 보이도록 미리 채운다
+                storyManager.preloadScript(script)
                 // 권한 팝업이 공연 시작 순간에 뜨지 않도록 미리 요청
                 storyManager.preflightPermissions()
             }
@@ -202,6 +204,21 @@ struct StoryDetailView: View {
         // (세로로 돌리면 다시 나타남)
         .toolbar(isPrompter ? .hidden : .automatic, for: .navigationBar)
         .toolbar(isPrompter ? .hidden : .automatic, for: .tabBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    OrientationController.lock(.landscape)
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "rotate.right")
+                        Text("가로")
+                    }
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                }
+            }
+        }
+        // 이야기 화면을 벗어나면 회전 고정을 풀어 준다
+        .onDisappear { OrientationController.unlock() }
         .alert("오류", isPresented: errorBinding) {
             Button("확인") { storyManager.stopStory() }
         } message: {
@@ -303,9 +320,11 @@ struct StoryDetailView: View {
 
             secondaryActions
         }
-        .padding(28)
+        .padding(24)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        // 대본을 가리지 않도록 아래쪽에 띄운다 (시작 전에도 대본을 미리 읽을 수 있어야 함)
+        .padding(.bottom, 16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 
     /// 크고 누르기 쉬운 소리 정지 버튼 (프롬프터 전용)
@@ -426,6 +445,22 @@ struct StoryDetailView: View {
                 .clipShape(Capsule())
                 .transition(.opacity)
             }
+
+            Button {
+                OrientationController.lock(.portrait)
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "rotate.left")
+                    Text("세로")
+                }
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .padding(.horizontal, 10)
+                    .frame(height: 30)
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("세로 보기")
 
             fontSizeButtons
         }

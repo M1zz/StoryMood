@@ -60,7 +60,8 @@ final class StoryModeManager: NSObject {
     }
 
     /// 다음 발동 대기 중인 효과음 큐 인덱스 — 낭독 문단은 건너뜀.
-    /// 매칭은 이 큐 하나만 대상으로 하므로, 더 아래의 키워드가 먼저 발동할 수 없다.
+    /// 화면에 "다음 큐"로 표시되는 큐이며, 실제 매칭은 이 큐를 포함해
+    /// 뒤따르는 효과음 큐 2개까지 함께 본다 (checkCurrentCue 참고).
     var awaitingCueIndex: Int? {
         guard isListening else { return nil }
         var i = currentCueIndex
@@ -118,12 +119,22 @@ final class StoryModeManager: NSObject {
     func stopStory() {
         stopRecognition(restoreSession: true)
         storyState = .idle
-        cues = []
+        // 대본은 화면에 그대로 남겨 둔다 — 종료 후에도 가로 화면에서 계속 읽을 수 있게
+        cues = selectedScript?.cues ?? []
         currentCueIndex = 0
         recognizedText = ""
         lastCompletedCueIndex = nil
         isRehearsal = false
-        selectedScript = nil
+    }
+
+    /// 시작 전 대본 미리 보기 — 마이크 없이 문단을 화면에 띄운다.
+    /// (가로 프롬프터로 미리 읽어 보거나 ▶︎ 로 소리를 들어 볼 수 있다)
+    func preloadScript(_ script: StoryScript) {
+        guard storyState == .idle else { return }
+        selectedScript = script
+        cues = script.cues
+        currentCueIndex = 0
+        lastCompletedCueIndex = nil
     }
 
     /// 리허설 시작 — 마이크·음성 인식 없이 ▶︎ 버튼으로 큐를 직접 발동하며 확인
@@ -347,11 +358,28 @@ final class StoryModeManager: NSObject {
             return
         }
 
-        if let keyword = cues[currentCueIndex].keyword,
-           Self.normalizedForMatching(text).contains(Self.normalizedForMatching(keyword)) {
-            triggerCue(at: currentCueIndex)
+        // 현재 큐뿐 아니라 뒤따르는 효과음 큐 2개까지 함께 확인한다.
+        // 키워드 하나를 못 알아들으면 그 뒤 효과음이 전부 막혀 버리는데,
+        // 앞뒤 큐 키워드는 서로 겹치지 않도록 대본을 관리하므로
+        // 뒤 큐가 들렸다는 건 낭독이 이미 그 지점을 지났다는 뜻이다.
+        let normalized = Self.normalizedForMatching(text)
+        var soundCuesChecked = 0
+        var index = currentCueIndex
+        while index < cues.count && soundCuesChecked <= Self.lookAheadCueCount {
+            if cues[index].hasCue {
+                if let keyword = cues[index].keyword,
+                   normalized.contains(Self.normalizedForMatching(keyword)) {
+                    triggerCue(at: index)
+                    return
+                }
+                soundCuesChecked += 1
+            }
+            index += 1
         }
     }
+
+    /// 현재 큐 뒤로 함께 매칭할 효과음 큐 개수
+    private static let lookAheadCueCount = 2
 
     /// 음성 인식 표기 차이를 흡수하는 발음 기반 정규화.
     /// - 공백·문장부호 제거 ("문을 두드렸어요" ↔ "문을두드렸어요")
