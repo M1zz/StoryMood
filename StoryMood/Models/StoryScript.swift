@@ -442,7 +442,14 @@ extension StoryScript {
             ),
             StoryCue(
                 id: "lrrh_17b",
-                text: "사냥꾼은 늑대의 배를 가르자 할머니가 무사히 나왔어요. 배를 가른 자리에 돌을 넣고 꿰매자 늑대는 달아나다 그 무게에 쓰러지고 말았어요."
+                text: "사냥꾼은 늑대의 배를 가르자 할머니가 무사히 나왔어요.",
+                keyword: "배를 가르자",
+                soundID: "scissors_cut",
+                delay: 0.3
+            ),
+            StoryCue(
+                id: "lrrh_17bb",
+                text: "배를 가른 자리에 돌을 넣고 꿰매자 늑대는 달아나다 그 무게에 쓰러지고 말았어요."
             ),
             StoryCue(
                 id: "lrrh_18",
@@ -485,8 +492,15 @@ extension StoryScript {
                 text: "옛날 옛날, 부유한 상인에게 마음씨 고운 딸이 하나 있었어요. 소녀의 어머니는 소녀가 어릴 때 세상을 떠났어요. 아버지는 딸이 외로울까 봐 다시 결혼했지만, 새엄마는 소녀를 전혀 아끼지 않았답니다."
             ),
             StoryCue(
+                id: "cin_02p",
+                text: "새엄마에게는 딸이 둘 있었어요. 두 언니는 새엄마를 닮아 심술궂었어요. 그들은 소녀에게 온갖 집안일을 시키며 구박했어요. 소녀는 부뚜막 가에서 일하다 재투성이가 되기 일쑤였어요.",
+                keyword: "부뚜막 가에서",
+                soundID: "broom_sweep",
+                delay: 0.3
+            ),
+            StoryCue(
                 id: "cin_02",
-                text: "새엄마에게는 딸이 둘 있었어요. 두 언니는 새엄마를 닮아 심술궂었어요. 그들은 소녀에게 온갖 집안일을 시키며 구박했어요. 소녀는 부뚜막 가에서 일하다 재투성이가 되기 일쑤였어요. 그래서 사람들은 소녀를 신데렐라라고 불렀어요.",
+                text: "그래서 사람들은 소녀를 신데렐라라고 불렀어요.",
                 keyword: "그래서 사람들은",
                 soundID: "wind_blow"
             ),
@@ -723,7 +737,14 @@ extension StoryScript {
             ),
             StoryCue(
                 id: "tlp_04",
-                text: "부지런한 셋째 돼지는 벽돌을 한 장 한 장 정성껏 쌓았어요. 형들이 '뭘 그렇게 힘들게 지어?' 하고 놀렸지만, 셋째는 몇 날 며칠 땀을 흘리며 튼튼한 벽돌집을 완성했답니다."
+                text: "부지런한 셋째 돼지는 벽돌을 한 장 한 장 정성껏 쌓았어요.",
+                keyword: "벽돌을 한 장",
+                soundID: "hammer_wood",
+                delay: 0.3
+            ),
+            StoryCue(
+                id: "tlp_04b",
+                text: "형들이 '뭘 그렇게 힘들게 지어?' 하고 놀렸지만, 셋째는 몇 날 며칠 땀을 흘리며 튼튼한 벽돌집을 완성했답니다."
             ),
             StoryCue(
                 id: "tlp_05",
@@ -979,7 +1000,13 @@ extension StoryScript {
             ),
             StoryCue(
                 id: "th_12b",
-                text: "숲속 동물들이 모두 뛰어나와 환호하며 박수를 쳤답니다. '거북이 만세! 거북이가 이겼다!'"
+                text: "숲속 동물들이 모두 뛰어나와 환호하며 박수를 쳤답니다.",
+                keyword: "박수를 쳤답니다",
+                soundID: "applause"
+            ),
+            StoryCue(
+                id: "th_12bb",
+                text: "'거북이 만세! 거북이가 이겼다!'"
             ),
             StoryCue(
                 id: "th_13",
@@ -1151,8 +1178,15 @@ extension StoryScript {
                 text: "왕자는 공주의 아름다움에 마음을 빼앗기고 말았지요."
             ),
             StoryCue(
+                id: "sw_16p",
+                text: "왕자가 공주에게 다가가 입을 맞추자, 목에 걸려 있던 독사과 조각이 툭 빠져나왔어요.",
+                keyword: "입을 맞추자",
+                soundID: "kiss",
+                delay: 0.3
+            ),
+            StoryCue(
                 id: "sw_16",
-                text: "왕자가 공주에게 다가가 입을 맞추자, 목에 걸려 있던 독사과 조각이 툭 빠져나왔어요. 그 순간 백설공주가 천천히 눈을 떴어요!",
+                text: "그 순간 백설공주가 천천히 눈을 떴어요!",
                 keyword: "눈을 떴어요",
                 soundID: "magic_chime"
             ),
@@ -1194,7 +1228,14 @@ extension StoryScript {
             ),
             StoryCue(
                 id: "jb_01",
-                text: "옛날 옛날, 잭이라는 소년이 홀어머니와 함께 살았어요. 집은 몹시 가난해서 남은 것이라곤 늙은 젖소 한 마리뿐이었지요. 어머니가 말했어요. '잭, 시장에 가서 소를 팔아 오렴.'"
+                text: "옛날 옛날, 잭이라는 소년이 홀어머니와 함께 살았어요. 집은 몹시 가난해서 남은 것이라곤 늙은 젖소 한 마리뿐이었지요.",
+                keyword: "늙은 젖소",
+                soundID: "cow_moo",
+                delay: 0.3
+            ),
+            StoryCue(
+                id: "jb_01b",
+                text: "어머니가 말했어요. '잭, 시장에 가서 소를 팔아 오렴.'"
             ),
             StoryCue(
                 id: "jb_02",
@@ -1315,8 +1356,14 @@ extension StoryScript {
                 text: "거인은 땅이 울리도록 쿵 떨어져서는 걸음아 나 살려라 하고 하늘나라로 도망가 버렸답니다."
             ),
             StoryCue(
+                id: "jb_15p",
+                text: "황금알을 낳는 암탉 덕분에 잭과 어머니는 더 이상 가난하지 않았어요.",
+                keyword: "가난하지 않았어요",
+                soundID: "coins_jingle"
+            ),
+            StoryCue(
                 id: "jb_15",
-                text: "황금알을 낳는 암탉 덕분에 잭과 어머니는 더 이상 가난하지 않았어요. 하프의 아름다운 연주를 들으며 두 사람은 오래오래 행복하게 살았답니다.",
+                text: "하프의 아름다운 연주를 들으며 두 사람은 오래오래 행복하게 살았답니다.",
                 keyword: "행복하게",
                 soundID: "happy_ending"
             ),

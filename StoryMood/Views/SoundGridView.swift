@@ -5,8 +5,9 @@ struct SoundGridView: View {
     let currentlyPlaying: SoundEffect?
     let onTap: (SoundEffect) -> Void
     
+    // 동그란 버튼 — 손가락으로 누르기 좋게 조금 크게, 간격은 넉넉히
     private let columns = [
-        GridItem(.adaptive(minimum: 90, maximum: 120), spacing: 8)
+        GridItem(.adaptive(minimum: 104, maximum: 140), spacing: 14)
     ]
     
     var body: some View {
@@ -18,7 +19,7 @@ struct SoundGridView: View {
             }
             .padding(.top, 60)
         } else {
-            LazyVGrid(columns: columns, spacing: 8) {
+            LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(sounds) { sound in
                     SoundButtonView(
                         sound: sound,

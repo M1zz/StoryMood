@@ -653,6 +653,129 @@ struct SoundLibrary {
                 hasAudioFile: SoundEffect.checkAudioExists(fileName: "page_turn")),
         ])
         
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        // MARK: 🎪 추가 효과음 (Mixkit) — 아이들이 좋아하는 소리 모음
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        sounds.append(contentsOf: [
+            SoundEffect(id: "cow_moo", nameKo: "음메 (소 울음)", nameEn: "Cow Moo", emoji: "🐄", fileName: "cow_moo", categoryID: "animals",
+                relatedTales: ["잭과 콩나무", "금도끼 은도끼", "브레멘 음악대"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "cow_moo")),
+
+            SoundEffect(id: "sheep_baa", nameKo: "매애 (양 울음)", nameEn: "Sheep Baa", emoji: "🐑", fileName: "sheep_baa", categoryID: "animals",
+                relatedTales: ["늑대와 일곱 마리 아기 염소", "양치기 소년", "미녀와 야수"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "sheep_baa")),
+
+            SoundEffect(id: "goose_honk", nameKo: "끼룩끼룩 (거위 떼)", nameEn: "Geese Honking", emoji: "🪿", fileName: "goose_honk", categoryID: "animals",
+                relatedTales: ["황금알을 낳는 거위", "미운 아기 오리", "닐스의 모험"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "goose_honk")),
+
+            SoundEffect(id: "crow_caw", nameKo: "까악 (까마귀)", nameEn: "Crow Caw", emoji: "🐦‍⬛", fileName: "crow_caw", categoryID: "animals",
+                relatedTales: ["여우와 까마귀", "백설공주", "헨젤과 그레텔"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "crow_caw")),
+
+            SoundEffect(id: "monkey_screech", nameKo: "우끼끼 (원숭이)", nameEn: "Monkey Screech", emoji: "🐒", fileName: "monkey_screech", categoryID: "animals",
+                relatedTales: ["정글북", "알라딘", "서유기"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "monkey_screech")),
+
+            SoundEffect(id: "beast_roar", nameKo: "어흥 (맹수 포효)", nameEn: "Beast Roar", emoji: "🐅", fileName: "beast_roar", categoryID: "animals",
+                relatedTales: ["해와 달이 된 오누이", "정글북", "미녀와 야수"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "beast_roar")),
+
+            SoundEffect(id: "dragon_roar", nameKo: "크아앙 (용)", nameEn: "Dragon Roar", emoji: "🐉", fileName: "dragon_roar", categoryID: "animals",
+                relatedTales: ["용감한 기사", "잠자는 숲속의 공주", "성 게오르기우스와 용"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "dragon_roar")),
+
+            SoundEffect(id: "rubber_duck", nameKo: "삑삑 (고무 오리)", nameEn: "Rubber Duck Squeak", emoji: "🦆", fileName: "rubber_duck", categoryID: "animals",
+                relatedTales: ["미운 아기 오리", "목욕하는 날"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "rubber_duck")),
+
+            SoundEffect(id: "applause", nameKo: "짝짝짝 (박수갈채)", nameEn: "Applause", emoji: "👏", fileName: "applause", categoryID: "people_voice",
+                relatedTales: ["신데렐라", "백설공주", "브레멘 음악대", "토끼와 거북이"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "applause")),
+
+            SoundEffect(id: "kid_giggle", nameKo: "까르르 (아이 웃음)", nameEn: "Kid Giggle", emoji: "😄", fileName: "kid_giggle", categoryID: "people_voice",
+                relatedTales: ["피터팬", "헨젤과 그레텔", "아기 돼지 삼형제"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "kid_giggle")),
+
+            SoundEffect(id: "sneeze", nameKo: "에취! (재채기)", nameEn: "Sneeze", emoji: "🤧", fileName: "sneeze", categoryID: "people_voice",
+                relatedTales: ["백설공주", "일곱 난쟁이", "피노키오"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "sneeze")),
+
+            SoundEffect(id: "kiss", nameKo: "쪽! (뽀뽀)", nameEn: "Kiss", emoji: "💋", fileName: "kiss", categoryID: "people_voice",
+                relatedTales: ["백설공주", "잠자는 숲속의 공주", "개구리 왕자"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "kiss")),
+
+            SoundEffect(id: "fart", nameKo: "뿡! (방귀)", nameEn: "Funny Fart", emoji: "💨", fileName: "fart", categoryID: "people_voice",
+                relatedTales: ["방귀쟁이 며느리", "아기 돼지 삼형제"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "fart")),
+
+            SoundEffect(id: "hiccup", nameKo: "딸꾹! (딸꾹질)", nameEn: "Hiccup", emoji: "😮", fileName: "hiccup", categoryID: "people_voice",
+                relatedTales: ["피노키오", "이상한 나라의 앨리스"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "hiccup")),
+
+            SoundEffect(id: "drink_sip", nameKo: "꿀꺽 (물 마시기)", nameEn: "Sip of Water", emoji: "🥤", fileName: "drink_sip", categoryID: "fire_kitchen",
+                relatedTales: ["늑대와 일곱 마리 아기 염소", "이상한 나라의 앨리스", "빨간 모자"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "drink_sip")),
+
+            SoundEffect(id: "glass_break", nameKo: "쨍그랑 (유리 깨짐)", nameEn: "Glass Break", emoji: "💥", fileName: "glass_break", categoryID: "adventure_action",
+                relatedTales: ["신데렐라", "백설공주", "눈의 여왕"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "glass_break")),
+
+            SoundEffect(id: "balloon_pop", nameKo: "펑! (풍선 터짐)", nameEn: "Balloon Pop", emoji: "🎈", fileName: "balloon_pop", categoryID: "adventure_action",
+                relatedTales: ["오즈의 마법사", "피노키오"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "balloon_pop")),
+
+            SoundEffect(id: "coins_jingle", nameKo: "짤랑 (동전)", nameEn: "Clinking Coins", emoji: "🪙", fileName: "coins_jingle", categoryID: "castle_palace",
+                relatedTales: ["브레멘 음악대", "잭과 콩나무", "알리바바와 40인의 도둑"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "coins_jingle")),
+
+            SoundEffect(id: "hammer_wood", nameKo: "뚝딱 (망치질)", nameEn: "Hammer on Wood", emoji: "🔨", fileName: "hammer_wood", categoryID: "adventure_action",
+                relatedTales: ["아기 돼지 삼형제", "피노키오", "구두장이와 요정"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "hammer_wood")),
+
+            SoundEffect(id: "hand_saw", nameKo: "쓱싹 (톱질)", nameEn: "Hand Saw", emoji: "🪚", fileName: "hand_saw", categoryID: "adventure_action",
+                relatedTales: ["아기 돼지 삼형제", "피노키오", "헨젤과 그레텔"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "hand_saw")),
+
+            SoundEffect(id: "broom_sweep", nameKo: "쓱쓱 (빗자루 쓸기)", nameEn: "Broom Sweep", emoji: "🧹", fileName: "broom_sweep", categoryID: "door_house",
+                relatedTales: ["신데렐라", "마녀의 빗자루", "백설공주"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "broom_sweep")),
+
+            SoundEffect(id: "scissors_cut", nameKo: "싹둑 (가위질)", nameEn: "Scissors Cut", emoji: "✂️", fileName: "scissors_cut", categoryID: "door_house",
+                relatedTales: ["늑대와 일곱 마리 아기 염소", "벌거벗은 임금님", "라푼젤"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "scissors_cut")),
+
+            SoundEffect(id: "paper_crumple", nameKo: "구깃 (종이 구기기)", nameEn: "Paper Crumple", emoji: "📄", fileName: "paper_crumple", categoryID: "door_house",
+                relatedTales: ["벌거벗은 임금님", "피노키오"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "paper_crumple")),
+
+            SoundEffect(id: "soap_bubble", nameKo: "뽀글 (비눗방울)", nameEn: "Soap Bubble", emoji: "🫧", fileName: "soap_bubble", categoryID: "ocean_water",
+                relatedTales: ["인어공주", "미운 아기 오리", "엄지공주"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "soap_bubble")),
+
+            SoundEffect(id: "cartoon_boing", nameKo: "뿅! (통통 튀기)", nameEn: "Cartoon Boing", emoji: "🪀", fileName: "cartoon_boing", categoryID: "adventure_action",
+                relatedTales: ["토끼와 거북이", "피터팬", "피노키오"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "cartoon_boing")),
+
+            SoundEffect(id: "cartoon_pop", nameKo: "뽁! (팝)", nameEn: "Cartoon Pop", emoji: "🫧", fileName: "cartoon_pop", categoryID: "adventure_action",
+                relatedTales: ["엄지공주", "마법 이야기"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "cartoon_pop")),
+
+            SoundEffect(id: "cartoon_whistle", nameKo: "삐익 (장난감 호루라기)", nameEn: "Toy Whistle", emoji: "📯", fileName: "cartoon_whistle", categoryID: "music_instruments",
+                relatedTales: ["브레멘 음악대", "피리 부는 사나이"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "cartoon_whistle")),
+
+            SoundEffect(id: "church_bell", nameKo: "뎅뎅 (교회 종)", nameEn: "Church Bell", emoji: "⛪", fileName: "church_bell", categoryID: "castle_palace",
+                relatedTales: ["신데렐라", "백설공주", "노트르담의 꼽추"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "church_bell")),
+
+            SoundEffect(id: "fireworks", nameKo: "팡팡 (폭죽)", nameEn: "Fireworks", emoji: "🎆", fileName: "fireworks", categoryID: "adventure_action",
+                relatedTales: ["신데렐라", "알라딘", "라푼젤"],
+                hasAudioFile: SoundEffect.checkAudioExists(fileName: "fireworks")),
+
+        ])
+
         self.allSounds = sounds
         self.soundsByID = Dictionary(sounds.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
