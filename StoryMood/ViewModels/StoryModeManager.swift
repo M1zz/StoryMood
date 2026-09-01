@@ -27,6 +27,9 @@ final class StoryModeManager: NSObject {
     var lastCompletedCueIndex: Int?
     /// 리허설 모드 — 마이크 없이 ▶︎ 버튼으로 진행하며 소리와 흐름을 확인
     var isRehearsal = false
+    /// 지금 읽고 있는 것으로 추정되는 문단 — 효과음이 없는 낭독 문단도 포함한다.
+    /// 인식된 말과 문단 첫머리를 맞춰 보며 앞으로만 움직인다.
+    var readingCueIndex: Int = 0
 
     // MARK: - Private
 
@@ -85,6 +88,7 @@ final class StoryModeManager: NSObject {
         currentCueIndex = 0
         recognizedText = ""
         lastCompletedCueIndex = nil
+        readingCueIndex = 0
         isRehearsal = false
 
         // 이어서 하기 — 저장된 진행 지점까지 완료 처리 후 그 다음부터
@@ -94,6 +98,7 @@ final class StoryModeManager: NSObject {
             }
             currentCueIndex = resumeIndex + 1
             lastCompletedCueIndex = resumeIndex
+            readingCueIndex = min(resumeIndex + 1, cues.count - 1)
         }
 
         storyState = .requestingPermission
@@ -124,6 +129,7 @@ final class StoryModeManager: NSObject {
         currentCueIndex = 0
         recognizedText = ""
         lastCompletedCueIndex = nil
+        readingCueIndex = 0
         isRehearsal = false
     }
 
@@ -135,6 +141,7 @@ final class StoryModeManager: NSObject {
         cues = script.cues
         currentCueIndex = 0
         lastCompletedCueIndex = nil
+        readingCueIndex = 0
     }
 
     /// 리허설 시작 — 마이크·음성 인식 없이 ▶︎ 버튼으로 큐를 직접 발동하며 확인
@@ -144,6 +151,7 @@ final class StoryModeManager: NSObject {
         currentCueIndex = 0
         recognizedText = ""
         lastCompletedCueIndex = nil
+        readingCueIndex = 0
         isRehearsal = true
         storyState = .listening
     }
@@ -363,6 +371,7 @@ final class StoryModeManager: NSObject {
         // 앞뒤 큐 키워드는 서로 겹치지 않도록 대본을 관리하므로
         // 뒤 큐가 들렸다는 건 낭독이 이미 그 지점을 지났다는 뜻이다.
         let normalized = Self.normalizedForMatching(text)
+        updateReadingPosition(in: normalized)
         var soundCuesChecked = 0
         var index = currentCueIndex
         while index < cues.count && soundCuesChecked <= Self.lookAheadCueCount {
@@ -380,6 +389,25 @@ final class StoryModeManager: NSObject {
 
     /// 현재 큐 뒤로 함께 매칭할 효과음 큐 개수
     private static let lookAheadCueCount = 2
+
+    /// 문단 첫머리를 인식된 말에서 찾아 '지금 읽는 문단'을 추정한다.
+    /// 다음 효과음 큐 문단까지만 살피고, 뒤로는 되돌아가지 않는다
+    /// (잘못 들려도 화면이 위로 튀지 않게).
+    private func updateReadingPosition(in normalizedText: String) {
+        let start = (lastCompletedCueIndex ?? -1) + 1
+        guard start < cues.count else { return }
+        var found = max(readingCueIndex, start)
+        var i = start
+        while i < cues.count {
+            let head = Self.normalizedForMatching(String(cues[i].text.prefix(10)))
+            if head.count >= 4, normalizedText.contains(head), i > found {
+                found = i
+            }
+            if cues[i].hasCue { break }   // 다음 효과음 큐 문단까지만
+            i += 1
+        }
+        if found != readingCueIndex { readingCueIndex = found }
+    }
 
     /// 음성 인식 표기 차이를 흡수하는 발음 기반 정규화.
     /// - 공백·문장부호 제거 ("문을 두드렸어요" ↔ "문을두드렸어요")
@@ -414,6 +442,12 @@ final class StoryModeManager: NSObject {
         return String(result)
     }
 
+    /// 읽는 위치를 직접 지정 — 화면이 엉뚱한 문단을 비추면 지금 읽는 문단을 탭해서 맞춘다
+    func focusCue(at index: Int) {
+        guard index >= 0, index < cues.count else { return }
+        readingCueIndex = index
+    }
+
     // 수동 재생 — 버튼으로 직접 소리 실행 (효과음 큐만 가능)
     func manualPlay(at index: Int) {
         guard index < cues.count, cues[index].hasCue else { return }
@@ -446,6 +480,7 @@ final class StoryModeManager: NSObject {
         cues[index].isCompleted = true
         currentCueIndex = index + 1
         lastCompletedCueIndex = index
+        readingCueIndex = min(index + 1, cues.count - 1)
         saveProgress(index)
 
         // 1) 인식만 중단 — 세션은 .playAndRecord 유지 (전환 없음)

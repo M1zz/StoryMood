@@ -165,10 +165,13 @@ struct StoryDetailView: View {
     /// 가로 배치 여부 — 아이패드는 가로 회전해도 size class가 .regular이므로
     /// 실제 창 크기(가로 > 세로)로 판단한다. Split View에서도 창 모양 기준으로 동작.
     @State private var isLandscapeWindow = false
+    /// 창 높이 — 아이폰 가로처럼 낮은 화면에서는 큰 플로팅 버튼이 대본을 가려서 숨긴다
+    @State private var windowHeight: CGFloat = 0
     /// "다음 큐" 칩을 탭했을 때 해당 문단으로 스크롤하기 위한 타깃
     @State private var pendingScrollTarget: Int?
     /// 가로(프롬프터) 모드 본문 글자 크기 — 보면대 거리에 맞게 조절, 기기에 저장
     @AppStorage("prompter_font_size") private var prompterFontSize: Double = 22
+    @Environment(\.dismiss) private var dismiss
 
     private var isPrompter: Bool { isLandscapeWindow }
 
@@ -189,6 +192,7 @@ struct StoryDetailView: View {
             }
             .onAppear {
                 isLandscapeWindow = geo.size.width > geo.size.height
+                windowHeight = geo.size.height
                 // 시작 전에도 대본이 보이도록 미리 채운다
                 storyManager.preloadScript(script)
                 // 권한 팝업이 공연 시작 순간에 뜨지 않도록 미리 요청
@@ -196,6 +200,7 @@ struct StoryDetailView: View {
             }
             .onChange(of: geo.size) { _, size in
                 isLandscapeWindow = size.width > size.height
+                windowHeight = size.height
             }
         }
         .navigationTitle(script.titleKo)
@@ -273,13 +278,9 @@ struct StoryDetailView: View {
 
             prompterTopBar
 
-            // 시작 전에는 화면 한가운데 큰 시작 버튼
-            if storyManager.storyState == .idle || storyManager.storyState == .finished {
-                prompterStartOverlay
-            }
-
-            // 소리 재생 중엔 오른쪽 아래 큰 정지 버튼 — 공연 중 바로 누를 수 있게
-            if audioManager.currentlyPlaying != nil {
+            // 소리 재생 중엔 오른쪽 아래 큰 정지 버튼 — 공연 중 바로 누를 수 있게.
+            // 화면이 낮은 아이폰 가로에서는 대본을 가리므로 상단 바의 정지 버튼만 쓴다
+            if audioManager.currentlyPlaying != nil, windowHeight >= 500 {
                 VStack {
                     Spacer()
                     HStack {
@@ -293,38 +294,6 @@ struct StoryDetailView: View {
         }
         .animation(.easeInOut(duration: 0.2), value: audioManager.currentlyPlaying?.id)
         .animation(.easeInOut(duration: 0.2), value: storyManager.storyState)
-    }
-
-    /// 화면 중앙의 큰 시작 버튼 (프롬프터 전용)
-    private var prompterStartOverlay: some View {
-        VStack(spacing: 14) {
-            Button {
-                storyManager.startStory(script)
-            } label: {
-                Label(
-                    storyManager.storyState == .finished ? "다시 시작" : "이야기 시작",
-                    systemImage: "mic.fill"
-                )
-                .font(.system(size: 26, weight: .bold, design: .rounded))
-                .padding(.horizontal, 48)
-                .padding(.vertical, 20)
-                .background(Color.blue, in: Capsule())
-                .foregroundStyle(.white)
-                .shadow(color: .blue.opacity(0.35), radius: 12, y: 6)
-            }
-            .buttonStyle(.plain)
-
-            Text("마이크가 목소리를 들으며 파란 굵은 단어에서 효과음을 틀어 줘요")
-                .font(.system(size: 13))
-                .foregroundStyle(.secondary)
-
-            secondaryActions
-        }
-        .padding(24)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        // 대본을 가리지 않도록 아래쪽에 띄운다 (시작 전에도 대본을 미리 읽을 수 있어야 함)
-        .padding(.bottom, 16)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 
     /// 크고 누르기 쉬운 소리 정지 버튼 (프롬프터 전용)
@@ -363,6 +332,24 @@ struct StoryDetailView: View {
 
     private var prompterControlRow: some View {
         HStack(spacing: 12) {
+            Button {
+                storyManager.stopStory()
+                audioManager.stop()
+                OrientationController.lock(.portrait)
+                dismiss()
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.left")
+                    Text("목록")
+                }
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .padding(.horizontal, 10)
+                .frame(height: 30)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+
             switch storyManager.storyState {
             case .idle, .finished:
                 Button {
@@ -378,6 +365,8 @@ struct StoryDetailView: View {
                         .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
+
+                secondaryActions
 
             case .requestingPermission:
                 ProgressView().tint(.blue)
@@ -630,18 +619,11 @@ struct StoryDetailView: View {
 
     // MARK: Cue List
 
-    /// 지금 읽어야 하는 문단 구간 — 마지막 발동 큐 다음 문단부터
-    /// 다음 효과음 큐 문단까지. 소리가 날 때마다 다음 구간으로 넘어간다.
-    private var readingRange: ClosedRange<Int>? {
+    /// 지금 읽고 있는 문단 — 효과음 문단이든 낭독 문단이든 똑같이 강조한다.
+    /// 낭독을 따라가며 앞으로 움직이므로, 읽는 사람이 늘 이 칸만 보면 된다.
+    private var readingIndex: Int? {
         guard storyManager.isListening, !storyManager.cues.isEmpty else { return nil }
-        let start = (storyManager.lastCompletedCueIndex ?? -1) + 1
-        guard start < storyManager.cues.count else { return nil }
-        var end = start
-        while end < storyManager.cues.count && !storyManager.cues[end].hasCue {
-            end += 1
-        }
-        end = min(end, storyManager.cues.count - 1)
-        return start...end
+        return min(storyManager.readingCueIndex, storyManager.cues.count - 1)
     }
 
     private var cueList: some View {
@@ -658,9 +640,10 @@ struct StoryDetailView: View {
                             effectiveDelay: storyManager.effectiveDelay(for: cue),
                             isCustomized: cue.hasCue && StoryCustomizationStore.shared.isCustomized(cueID: cue.id, story: script.id),
                             bodyFontSize: isPrompter ? CGFloat(prompterFontSize) : 15,
-                            isReading: readingRange?.contains(index) ?? false,
+                            isReading: readingIndex == index,
                             onManualPlay: { storyManager.manualPlay(at: index) },
-                            onEdit: { editingCueIndex = IdentifiableIndex(index) }
+                            onEdit: { editingCueIndex = IdentifiableIndex(index) },
+                            onFocus: { storyManager.focusCue(at: index) }
                         )
                         .id(index)
                     }
@@ -682,21 +665,21 @@ struct StoryDetailView: View {
                 .frame(maxWidth: isPrompter ? 900 : 760)
                 .frame(maxWidth: .infinity)
             }
-            // 소리 큐가 실제로 발동했을 때만 스크롤 — 다음에 읽을 문단을 가운데로.
-            // currentCueIndex 기준으로 스크롤하면 시작하자마자 낭독 문단을 건너뛰고
-            // 다음 효과음 큐 문단으로 화면이 튀는 문제가 있었음
-            .onChange(of: storyManager.lastCompletedCueIndex) { _, completed in
-                guard let completed, !storyManager.cues.isEmpty else { return }
-                let next = min(completed + 1, storyManager.cues.count - 1)
+            // 읽는 문단이 바뀔 때마다 그 문단을 화면 가운데로 —
+            // 효과음이 없는 낭독 문단에서도 대본이 따라 넘어간다
+            .onChange(of: storyManager.readingCueIndex) { _, index in
+                guard storyManager.isListening, !storyManager.cues.isEmpty else { return }
                 withAnimation(.easeInOut(duration: 0.4)) {
-                    proxy.scrollTo(next, anchor: .center)
+                    proxy.scrollTo(min(index, storyManager.cues.count - 1), anchor: .center)
                 }
             }
             // 이야기 (재)시작 시 맨 위 문단부터
             .onChange(of: storyManager.storyState) { _, state in
                 if state == .listening && storyManager.lastCompletedCueIndex == nil {
                     withAnimation(.easeInOut(duration: 0.3)) {
-                        proxy.scrollTo(0, anchor: .top)
+                        // 가로 모드는 상단 바가 대본 위에 떠 있으므로 가운데로 —
+                        // .top으로 맞추면 첫 문단이 바 뒤로 숨는다
+                        proxy.scrollTo(0, anchor: isPrompter ? .center : .top)
                     }
                 }
             }
@@ -892,6 +875,8 @@ private struct CueRowView: View {
     let isReading: Bool          // 지금 읽어야 하는 문단 — 굵고 크게 강조
     let onManualPlay: () -> Void
     let onEdit: () -> Void
+    /// 문단을 탭하면 '지금 읽는 문단'을 이 문단으로 맞춘다
+    let onFocus: () -> Void
 
     /// 프롬프터(가로) 모드 여부 — 버튼·줄간격도 함께 키움
     private var isPrompter: Bool { bodyFontSize > 15 }
@@ -956,7 +941,7 @@ private struct CueRowView: View {
                     // 낭독 문단 번호
                     Text("\(index + 1)")
                         .font(.system(size: isPrompter ? 13 : 10, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color.secondary)
+                        .foregroundStyle(isReading ? Color.blue : Color.secondary)
                 }
             }
             .frame(width: isPrompter ? 32 : 26, height: isPrompter ? 32 : 26)
@@ -1032,12 +1017,15 @@ private struct CueRowView: View {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(rowBackground)
                 .overlay {
-                    if isCurrent {
+                    if isReading || isCurrent {
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(Color.blue.opacity(0.4), lineWidth: 1.5)
+                            .stroke(Color.blue.opacity(isReading ? 0.55 : 0.25),
+                                    lineWidth: isReading ? 2 : 1.5)
                     }
                 }
         }
+        .contentShape(Rectangle())
+        .onTapGesture(perform: onFocus)
         // 완료된 큐 문단도 흐려지지 않음 — 완료 표시는 초록 체크 배지로만
         .animation(.easeInOut(duration: 0.3), value: isCurrent)
         .animation(.easeInOut(duration: 0.3), value: cue.isCompleted)
@@ -1045,14 +1033,17 @@ private struct CueRowView: View {
     }
 
     private var badgeColor: Color {
-        if !cue.hasCue { return .gray }
+        if !cue.hasCue { return isReading ? .blue : .gray }
         if cue.isCompleted { return .green }
         if isCurrent { return .blue }
         return .orange
     }
 
     private var rowBackground: Color {
-        if isCurrent { return Color.blue.opacity(0.06) }
+        // 지금 읽는 문단은 효과음 유무와 상관없이 똑같이 강조 —
+        // 효과음 문단만 눈에 띄면 그 사이 낭독 문단을 건너뛰게 된다
+        if isReading { return Color.blue.opacity(0.10) }
+        if isCurrent { return Color.blue.opacity(0.05) }
         if cue.hasCue { return Color(.systemBackground) }
         return Color.clear   // 낭독 문단은 배경 없이 자연스럽게
     }
