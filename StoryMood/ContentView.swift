@@ -28,6 +28,8 @@ struct ContentView: View {
 
 private struct SoundLibraryView: View {
     @Bindable var audioManager: AudioManager
+    /// 소리를 갈아끼우는 중인 버튼
+    @State private var editingSound: SoundEffect?
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -51,8 +53,25 @@ private struct SoundLibraryView: View {
                         moods: audioManager.moods,
                         selectedMood: audioManager.selectedMood,
                         isBGMPlaying: audioManager.isBGMPlaying,
-                        onSelect: { audioManager.selectMood($0) }
+                        isBackgroundMusicOnly: audioManager.showBackgroundMusicOnly,
+                        onSelect: { audioManager.selectMood($0) },
+                        onSelectBackgroundMusic: { audioManager.toggleBackgroundMusicCategory() }
                     )
+
+                    // 배경음악 카테고리 설명
+                    if audioManager.showBackgroundMusicOnly {
+                        HStack {
+                            Text(BackgroundMusicSet.chipDescription)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text("\(audioManager.filteredSounds.count)개")
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .foregroundStyle(BackgroundMusicSet.chipColor)
+                        }
+                        .padding(.horizontal, 16)
+                        .transition(.opacity)
+                    }
 
                     // Mood description
                     if let mood = audioManager.selectedMood {
@@ -76,7 +95,8 @@ private struct SoundLibraryView: View {
                     SoundGridView(
                         sounds: audioManager.filteredSounds,
                         currentlyPlaying: audioManager.currentlyPlaying,
-                        onTap: { audioManager.play($0) }
+                        onTap: { audioManager.play($0) },
+                        onEdit: { editingSound = $0 }
                     )
                 }
             }
@@ -107,6 +127,9 @@ private struct SoundLibraryView: View {
         }
         .sheet(isPresented: $audioManager.showTaleList) {
             TaleListView()
+        }
+        .sheet(item: $editingSound) { sound in
+            SoundReplacementSheet(sound: sound, audioManager: audioManager)
         }
     }
 }
@@ -205,9 +228,183 @@ private struct LegendView: View {
                     .foregroundStyle(.secondary)
             }
             
+            HStack(spacing: 4) {
+                Image(systemName: "hand.tap")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.secondary)
+                Text("길게 누르면 소리 바꾸기")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+
             Spacer()
         }
         .padding(.horizontal, 16)
+    }
+}
+
+// MARK: - 효과음 갈아끼우기 시트
+
+private struct SoundReplacementSheet: View {
+    let sound: SoundEffect
+    @Bindable var audioManager: AudioManager
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var searchText = ""
+    @State private var selectedID: String
+
+    init(sound: SoundEffect, audioManager: AudioManager) {
+        self.sound = sound
+        self.audioManager = audioManager
+        _selectedID = State(initialValue:
+            SoundCustomizationStore.shared.replacementID(for: sound.id) ?? sound.id)
+    }
+
+    /// 음원이 있는 소리만 고를 수 있다
+    private var candidates: [SoundEffect] {
+        let all = SoundLibrary.shared.allSounds.filter { $0.hasAudioFile }
+        guard !searchText.isEmpty else { return all }
+        return all.filter {
+            $0.nameKo.localizedCaseInsensitiveContains(searchText) ||
+            $0.nameEn.localizedCaseInsensitiveContains(searchText)
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                header
+
+                // 검색
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+                    TextField("바꿔 넣을 소리 검색...", text: $searchText)
+                        .font(.system(size: 14))
+                        .autocorrectionDisabled()
+                    if !searchText.isEmpty {
+                        Button { searchText = "" } label: {
+                            Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+
+                List(candidates) { candidate in
+                    HStack(spacing: 10) {
+                        Button {
+                            selectedID = candidate.id
+                        } label: {
+                            HStack(spacing: 10) {
+                                Text(candidate.emoji)
+                                    .font(.system(size: 20))
+                                    .frame(width: 32)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    HStack(spacing: 6) {
+                                        Text(candidate.nameKo)
+                                            .font(.system(size: 14, weight: .medium))
+                                            .foregroundStyle(.primary)
+                                        if candidate.id == sound.id {
+                                            Text("원래 소리")
+                                                .font(.system(size: 10, weight: .bold))
+                                                .padding(.horizontal, 5)
+                                                .padding(.vertical, 1)
+                                                .background(Capsule().fill(.orange.opacity(0.15)))
+                                                .foregroundStyle(.orange)
+                                        }
+                                        if candidate.isBackgroundMusic {
+                                            Text("배경음악")
+                                                .font(.system(size: 10, weight: .bold))
+                                                .padding(.horizontal, 5)
+                                                .padding(.vertical, 1)
+                                                .background(Capsule().fill(BackgroundMusicSet.chipColor.opacity(0.15)))
+                                                .foregroundStyle(BackgroundMusicSet.chipColor)
+                                        }
+                                    }
+                                    Text(candidate.nameEn)
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                Spacer()
+
+                                if candidate.id == selectedID {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(.blue)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+
+                        // 미리 듣기 — 고르기 전에 소리부터 확인 (그 소리의 원본 파일로)
+                        Button {
+                            audioManager.play(candidate, useCustomization: false)
+                        } label: {
+                            Image(systemName: audioManager.currentlyPlaying?.id == candidate.id
+                                  ? "stop.circle.fill" : "play.circle.fill")
+                                .font(.system(size: 22))
+                                .foregroundStyle(.blue)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .listRowBackground(candidate.id == selectedID ? Color.blue.opacity(0.06) : nil)
+                }
+                .listStyle(.plain)
+            }
+            .navigationTitle("효과음 바꾸기")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("취소") {
+                        audioManager.stop()
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("적용") {
+                        SoundCustomizationStore.shared.set(replacementID: selectedID, for: sound.id)
+                        audioManager.stop()
+                        dismiss()
+                    }
+                    .fontWeight(.bold)
+                }
+            }
+        }
+    }
+
+    private var header: some View {
+        HStack(spacing: 10) {
+            Text(sound.emoji).font(.system(size: 24))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(sound.nameKo)
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(.secondary)
+                    Text(SoundLibrary.shared.soundsByID[selectedID]?.nameKo ?? sound.nameKo)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(selectedID == sound.id ? .secondary : BackgroundMusicSet.chipColor)
+                }
+            }
+
+            Spacer()
+
+            if selectedID != sound.id {
+                Button("되돌리기") { selectedID = sound.id }
+                    .font(.system(size: 12))
+                    .foregroundStyle(.orange)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color(.secondarySystemBackground))
     }
 }
 

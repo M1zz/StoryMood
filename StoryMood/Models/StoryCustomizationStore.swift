@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 
 /// 동화별 큐 사운드 커스터마이징을 UserDefaults에 저장/불러오기
 final class StoryCustomizationStore {
@@ -73,6 +74,80 @@ final class StoryCustomizationStore {
     private func persistDelays() {
         if let data = try? JSONEncoder().encode(delayMap) {
             UserDefaults.standard.set(data, forKey: delayKey)
+        }
+    }
+}
+
+// MARK: - 효과음 교체 (전역)
+
+/// 효과음 보드에서 "이 소리 대신 저 소리" 로 갈아끼운 결과를 저장.
+/// 동화별 큐 교체(StoryCustomizationStore)와 달리 앱 전체에 적용된다.
+@Observable
+final class SoundCustomizationStore {
+
+    static let shared = SoundCustomizationStore()
+
+    private let defaultsKey = "soundReplacements"
+    /// [원래 soundID: 대신 재생할 soundID]
+    private var map: [String: String] = [:]
+
+    private init() {
+        if let data = UserDefaults.standard.data(forKey: defaultsKey),
+           let decoded = try? JSONDecoder().decode([String: String].self, from: data) {
+            map = decoded
+        }
+    }
+
+    /// 교체된 soundID. 교체하지 않았으면 nil
+    func replacementID(for soundID: String) -> String? {
+        map[soundID]
+    }
+
+    func isCustomized(_ soundID: String) -> Bool {
+        map[soundID] != nil
+    }
+
+    /// 교체 저장 — 자기 자신으로 바꾸면 교체 해제
+    func set(replacementID: String, for soundID: String) {
+        if replacementID == soundID {
+            reset(soundID)
+            return
+        }
+        map[soundID] = replacementID
+        persist()
+    }
+
+    func reset(_ soundID: String) {
+        map.removeValue(forKey: soundID)
+        persist()
+    }
+
+    func resetAll() {
+        map.removeAll()
+        persist()
+    }
+
+    /// 교체까지 반영한 실제 재생 파일명
+    func effectiveFileName(for sound: SoundEffect) -> String {
+        guard let replacementID = map[sound.id],
+              let replacement = SoundLibrary.shared.soundsByID[replacementID] else {
+            return sound.fileName
+        }
+        return replacement.fileName
+    }
+
+    /// 교체까지 반영한 실제 사운드 (없으면 원래 사운드)
+    func effectiveSound(for sound: SoundEffect) -> SoundEffect {
+        guard let replacementID = map[sound.id],
+              let replacement = SoundLibrary.shared.soundsByID[replacementID] else {
+            return sound
+        }
+        return replacement
+    }
+
+    private func persist() {
+        if let data = try? JSONEncoder().encode(map) {
+            UserDefaults.standard.set(data, forKey: defaultsKey)
         }
     }
 }

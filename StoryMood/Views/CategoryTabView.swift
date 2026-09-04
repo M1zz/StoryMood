@@ -4,7 +4,9 @@ struct MoodTabView: View {
     let moods: [SoundMood]
     let selectedMood: SoundMood?
     let isBGMPlaying: Bool
+    let isBackgroundMusicOnly: Bool
     let onSelect: (SoundMood?) -> Void
+    let onSelectBackgroundMusic: () -> Void
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -14,9 +16,19 @@ struct MoodTabView: View {
                     emoji: "🎵",
                     name: "전체",
                     color: .blue,
-                    isSelected: selectedMood == nil,
+                    isSelected: selectedMood == nil && !isBackgroundMusicOnly,
                     showBGM: false,
                     action: { onSelect(nil) }
+                )
+
+                // 배경음악 — 효과음과 규칙이 달라(길게 반복) 따로 뺀 카테고리
+                MoodChip(
+                    emoji: BackgroundMusicSet.chipEmoji,
+                    name: BackgroundMusicSet.chipName,
+                    color: BackgroundMusicSet.chipColor,
+                    isSelected: isBackgroundMusicOnly,
+                    showBGM: false,
+                    action: onSelectBackgroundMusic
                 )
 
                 ForEach(moods) { mood in
@@ -24,7 +36,7 @@ struct MoodTabView: View {
                         emoji: mood.emoji,
                         name: mood.nameKo,
                         color: mood.color,
-                        isSelected: selectedMood?.id == mood.id,
+                        isSelected: !isBackgroundMusicOnly && selectedMood?.id == mood.id,
                         showBGM: isBGMPlaying && selectedMood?.id == mood.id,
                         action: { onSelect(mood) }
                     )
@@ -80,6 +92,8 @@ private struct MoodChip: View {
         moods: SoundMood.allMoods,
         selectedMood: SoundMood.allMoods.first,
         isBGMPlaying: true,
-        onSelect: { _ in }
+        isBackgroundMusicOnly: false,
+        onSelect: { _ in },
+        onSelectBackgroundMusic: {}
     )
 }

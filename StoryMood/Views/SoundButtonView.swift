@@ -20,12 +20,21 @@ struct SoundButtonView: View {
     let sound: SoundEffect
     let isPlaying: Bool
     let action: () -> Void
+    /// 길게 눌러 "효과음 바꾸기" — 미지정이면 메뉴를 달지 않는다 (프리뷰/재사용용)
+    var onEdit: (() -> Void)? = nil
 
     @State private var isPressed = false
     @State private var wiggle = false
 
     private var moodColor: Color { sound.primaryMoodColor }
     private var backgroundImage: UIImage? { SoundImageCache.image(for: sound.fileName) }
+
+    /// 다른 소리로 갈아끼운 버튼인가
+    private var isCustomized: Bool { SoundCustomizationStore.shared.isCustomized(sound.id) }
+    /// 실제로 재생되는 소리 (교체했으면 그 소리)
+    private var effectiveSound: SoundEffect { SoundCustomizationStore.shared.effectiveSound(for: sound) }
+    /// 교체된 소리에 음원이 있으면 원래 소리에 음원이 없어도 재생된다
+    private var canPlay: Bool { SoundEffect.audioURL(for: effectiveSound.fileName) != nil }
 
     var body: some View {
         Button(action: tapped) {
@@ -59,11 +68,14 @@ struct SoundButtonView: View {
                         Circle().stroke(ringColor, lineWidth: ringWidth)
                     }
                     .overlay {
-                        if !sound.hasAudioFile {
+                        if !canPlay {
                             Circle()
                                 .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
                                 .foregroundColor(.red.opacity(0.8))
                         }
+                    }
+                    .overlay(alignment: .topTrailing) {
+                        if isCustomized { customizedBadge }
                     }
                     .shadow(
                         color: isPlaying ? moodColor.opacity(0.55) : .black.opacity(0.15),
@@ -71,7 +83,7 @@ struct SoundButtonView: View {
                         y: isPlaying ? 4 : 2
                     )
 
-                if !sound.hasAudioFile {
+                if !canPlay {
                     Text("음원 필요")
                         .font(.system(size: 9, weight: .bold))
                         .foregroundStyle(.red)
@@ -82,12 +94,46 @@ struct SoundButtonView: View {
             }
         }
         .buttonStyle(.plain)
+        .contextMenu { editMenu }
         .scaleEffect(isPressed ? 0.9 : (isPlaying ? 1.04 : 1.0))
         .animation(.spring(response: 0.25, dampingFraction: 0.6), value: isPressed)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPlaying)
         .rotationEffect(.degrees(wiggle ? 2 : 0))
         .animation(.spring(response: 0.15, dampingFraction: 0.3), value: wiggle)
-        .accessibilityLabel(sound.nameKo)
+        .accessibilityLabel(isCustomized ? "\(sound.nameKo), \(effectiveSound.nameKo)로 바뀜" : sound.nameKo)
+    }
+
+    // MARK: - 효과음 바꾸기
+
+    @ViewBuilder
+    private var editMenu: some View {
+        if let onEdit {
+            Button {
+                onEdit()
+            } label: {
+                Label(isCustomized ? "다른 소리로 바꾸기" : "효과음 바꾸기", systemImage: "arrow.triangle.2.circlepath")
+            }
+
+            if isCustomized {
+                Text("지금: \(effectiveSound.nameKo)")
+                Button(role: .destructive) {
+                    SoundCustomizationStore.shared.reset(sound.id)
+                } label: {
+                    Label("원래 소리로 되돌리기", systemImage: "arrow.uturn.backward")
+                }
+            }
+        }
+    }
+
+    /// 갈아끼운 버튼임을 알리는 작은 배지
+    private var customizedBadge: some View {
+        Image(systemName: "arrow.triangle.2.circlepath")
+            .font(.system(size: 10, weight: .bold))
+            .foregroundStyle(.white)
+            .padding(5)
+            .background(Circle().fill(BackgroundMusicSet.chipColor))
+            .overlay(Circle().stroke(.white.opacity(0.9), lineWidth: 1.5))
+            .padding(6)
     }
 
     // MARK: - Pieces
@@ -117,7 +163,7 @@ struct SoundButtonView: View {
     }
 
     private var ringColor: Color {
-        if !sound.hasAudioFile { return .clear }   // 빨간 점선 테두리가 따로 그려진다
+        if !canPlay { return .clear }   // 빨간 점선 테두리가 따로 그려진다
         return isPlaying ? moodColor : .white.opacity(0.35)
     }
 
@@ -129,11 +175,11 @@ struct SoundButtonView: View {
         isPressed = true
         action()
 
-        UIImpactFeedbackGenerator(style: sound.hasAudioFile ? .medium : .heavy).impactOccurred()
+        UIImpactFeedbackGenerator(style: canPlay ? .medium : .heavy).impactOccurred()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { isPressed = false }
 
-        if !sound.hasAudioFile {
+        if !canPlay {
             withAnimation(.default) { wiggle = true }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { wiggle = false }
         }

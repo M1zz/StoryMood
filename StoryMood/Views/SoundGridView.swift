@@ -4,6 +4,8 @@ struct SoundGridView: View {
     let sounds: [SoundEffect]
     let currentlyPlaying: SoundEffect?
     let onTap: (SoundEffect) -> Void
+    /// 길게 눌러 소리 갈아끼우기
+    var onEdit: ((SoundEffect) -> Void)? = nil
     
     // 동그란 버튼 — 손가락으로 누르기 좋게 조금 크게, 간격은 넉넉히
     private let columns = [
@@ -24,7 +26,8 @@ struct SoundGridView: View {
                     SoundButtonView(
                         sound: sound,
                         isPlaying: currentlyPlaying?.id == sound.id,
-                        action: { onTap(sound) }
+                        action: { onTap(sound) },
+                        onEdit: onEdit.map { edit in { edit(sound) } }
                     )
                     .id(sound.id)
                 }

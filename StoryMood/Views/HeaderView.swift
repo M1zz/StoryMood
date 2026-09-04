@@ -12,9 +12,9 @@ struct HeaderView: View {
             // Title
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("이야기 무드")
+                    Text("옛날옛날에")
                         .font(.system(size: 28, weight: .heavy, design: .rounded))
-                    Text("Story Mood — 동화 사운드 보조도구")
+                    Text("동화 사운드 보조도구")
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(.secondary)
                 }

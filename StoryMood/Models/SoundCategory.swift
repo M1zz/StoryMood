@@ -135,3 +135,37 @@ struct SoundCategory: Identifiable, Hashable {
         ),
     ]
 }
+
+// MARK: - 배경음악 분류
+
+/// 배경음악(음악 + 앰비언스) — 효과음과 달리 3초에서 끊지 않고 길게 반복해서 깔아 준다.
+enum BackgroundMusicSet {
+
+    static let chipEmoji = "🎼"
+    static let chipName = "배경음악"
+    static let chipColor = Color(red: 0.35, green: 0.45, blue: 0.85)
+    static let chipDescription = "장면 아래 길게 깔아 두는 음악과 배경 소리"
+
+    /// 배경음악으로 취급할 사운드 ID
+    static let soundIDs: Set<String> = [
+        // 🎵 음악
+        "once_upon_time", "happy_ending", "ballroom_music", "music_box",
+        "lullaby", "creepy_music", "harp_strum", "flute_play", "singing_voice",
+        // 🎭 앰비언스 (배경 소리)
+        "forest_ambience", "night_ambience", "village_ambience", "market_bustle",
+        "garden_peaceful", "magical_forest", "underwater_ambience", "cave_echo",
+        "desert_wind", "mountain_wind", "sunrise_birds",
+        "ocean_waves", "stream_flow", "waterfall",
+        "rain_light", "rain_heavy", "wind_blow", "wind_howl",
+        "fire_crackle", "cricket_chirp", "clock_tick",
+    ]
+
+    static func contains(_ soundID: String) -> Bool {
+        soundIDs.contains(soundID)
+    }
+}
+
+extension SoundEffect {
+    /// 배경음악인가 — 재생 규칙(길이/루프)이 효과음과 다르다
+    var isBackgroundMusic: Bool { BackgroundMusicSet.contains(id) }
+}

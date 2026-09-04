@@ -13,6 +13,8 @@ final class AudioManager {
     var searchText = ""
     var showMissingOnly = false
     var showTaleList = false
+    /// 배경음악 카테고리만 보기 — 무드 필터와 배타적
+    var showBackgroundMusicOnly = false
     
     private var audioPlayer: AVAudioPlayer?
     private var bgmPlayer: AVAudioPlayer?
@@ -32,16 +34,20 @@ final class AudioManager {
     var soundCurrentTime: TimeInterval = 0
 
     private var playbackTimer: Timer?
-    /// 노래가 아닌 효과음의 5초 재생 제한 타이머
+    /// 재생 길이 제한 타이머 (효과음 3초 / 배경음악 60초)
     private var effectLimitTimer: Timer?
-    /// 무드 BGM 10초 재생 제한 타이머
-    private var bgmLimitTimer: Timer?
+    /// 루프 재생 중에도 진행 시간을 정확히 재기 위한 시작 시각
+    private var playStartedAt: Date?
 
-    /// 5초 제한에서 제외되는 음악 사운드 — 노래/배경 음악은 길게 흐르는 게 정상
-    private static let musicSoundIDs: Set<String> = [
-        "once_upon_time", "happy_ending", "ballroom_music", "music_box",
-        "lullaby", "flute_play", "singing_voice", "harp_strum", "creepy_music",
-    ]
+    // MARK: - 재생 길이 규칙
+    // 효과음은 길이가 제각각이라 그대로 틀면 "찰칵"처럼 너무 짧거나 30초씩 늘어진다.
+    // → 짧으면 3초가 될 때까지 반복하고, 길면 3초에서 페이드아웃으로 끊는다.
+    /// 효과음 목표 재생 길이
+    private static let effectDuration: TimeInterval = 3.0
+    private static let effectFade: TimeInterval = 0.3
+    /// 배경음악은 장면 아래 깔리는 소리라 길게 — 60초까지 반복 후 서서히 사라짐
+    private static let backgroundMusicDuration: TimeInterval = 60.0
+    private static let backgroundMusicFade: TimeInterval = 2.5
     
     // MARK: - Computed
     
@@ -52,7 +58,9 @@ final class AudioManager {
     var filteredSounds: [SoundEffect] {
         var sounds = library.allSounds
 
-        if let mood = selectedMood {
+        if showBackgroundMusicOnly {
+            sounds = sounds.filter { $0.isBackgroundMusic }
+        } else if let mood = selectedMood {
             sounds = sounds.filter { $0.moodIDs.contains(mood.id) }
         }
 
@@ -101,22 +109,27 @@ final class AudioManager {
     
     // MARK: - Playback
     
-    func play(_ sound: SoundEffect) {
+    /// - Parameter useCustomization: false면 갈아끼운 소리를 무시하고 이 소리의 원본 파일을 재생
+    ///   (소리를 고르는 시트에서 후보를 미리 들어볼 때)
+    func play(_ sound: SoundEffect, useCustomization: Bool = true) {
         // 토글: 이미 재생 중인 소리를 다시 누르면 정지
         if currentlyPlaying?.id == sound.id {
             stop()
             return
         }
         stop()
-        
-        // Check if audio file exists
-        guard sound.hasAudioFile else {
-            // Provide haptic feedback for missing audio
+
+        // 사용자가 갈아끼운 소리가 있으면 그 파일을 대신 재생한다
+        let fileName = useCustomization
+            ? SoundCustomizationStore.shared.effectiveFileName(for: sound)
+            : sound.fileName
+
+        // 캐시된 URL로 즉시 재생 (번들 탐색 없음)
+        guard let url = SoundEffect.audioURL(for: fileName) else {
+            // 음원 미등록 — 잠깐 표시해 알려 준다
             withAnimation(.easeInOut(duration: 0.3)) {
                 currentlyPlaying = sound
             }
-            
-            // Flash briefly to indicate missing audio
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                 withAnimation {
                     self?.currentlyPlaying = nil
@@ -124,64 +137,70 @@ final class AudioManager {
             }
             return
         }
-        
-        // 캐시된 URL로 즉시 재생 (번들 탐색 없음)
-        guard let url = SoundEffect.audioURL(for: sound.fileName) else { return }
+
         do {
             let player: AVAudioPlayer
-            if let cached = effectPlayerCache[sound.fileName] {
+            if let cached = effectPlayerCache[fileName] {
                 player = cached
                 player.stop()
                 player.currentTime = 0
             } else {
                 player = try AVAudioPlayer(contentsOf: url)
                 player.prepareToPlay()
-                effectPlayerCache[sound.fileName] = player
+                effectPlayerCache[fileName] = player
             }
             player.volume = soundVolume
+
+            // 목표 길이보다 짧은 소리는 반복해서 채운다 — 제한 타이머가 정확히 끊어 준다
+            let isBGM = sound.isBackgroundMusic
+            let limit = isBGM ? Self.backgroundMusicDuration : Self.effectDuration
+            player.numberOfLoops = player.duration < limit - 0.05 ? -1 : 0
+
             player.play()
             audioPlayer = player
-            soundDuration = player.duration
+            playStartedAt = Date()
+            soundDuration = limit
             soundCurrentTime = 0
             startPlaybackTimer()
-            scheduleEffectLimit(for: sound)
+            scheduleEffectLimit(isBackgroundMusic: isBGM)
 
             withAnimation {
                 currentlyPlaying = sound
                 isPlaying = true
             }
         } catch {
-            print("Error playing \(sound.fileName): \(error)")
+            print("Error playing \(fileName): \(error)")
         }
     }
 
-    /// 재생 시간 제한 — 효과음 5초, 음악(노래) 10초.
+    /// 재생 길이 제한 — 효과음 3초, 배경음악 60초.
     /// 페이드아웃이 제한 시간 안에 끝나도록 미리 페이드를 시작한다.
-    private func scheduleEffectLimit(for sound: SoundEffect) {
+    private func scheduleEffectLimit(isBackgroundMusic: Bool) {
         effectLimitTimer?.invalidate()
         effectLimitTimer = nil
 
-        let isMusic = Self.musicSoundIDs.contains(sound.id)
-        let limit: TimeInterval = isMusic ? 10.0 : 5.0
-        let fade: TimeInterval = isMusic ? 2.0 : 0.4
+        let limit = isBackgroundMusic ? Self.backgroundMusicDuration : Self.effectDuration
+        let fade = isBackgroundMusic ? Self.backgroundMusicFade : Self.effectFade
+        let player = audioPlayer
 
-        let timer = Timer(timeInterval: limit - fade, repeats: false) { [weak self] _ in
-            guard let self, self.currentlyPlaying?.id == sound.id else { return }
+        let timer = Timer(timeInterval: max(0.1, limit - fade), repeats: false) { [weak self] _ in
+            guard let self, self.audioPlayer === player else { return }
             self.stop(fadeDuration: fade)
         }
         effectLimitTimer = timer
         RunLoop.main.add(timer, forMode: .common)
     }
 
-    /// fadeDuration 미지정 시 음악은 1.2초, 효과음은 0.15초 페이드아웃 —
+    /// fadeDuration 미지정 시 배경음악은 1.2초, 효과음은 0.15초 페이드아웃 —
     /// 음악이 뚝 끊기지 않고 항상 부드럽게 사라지도록
     func stop(fadeDuration: TimeInterval? = nil) {
-        let isMusic = currentlyPlaying.map { Self.musicSoundIDs.contains($0.id) } ?? false
-        let fade = fadeDuration ?? (isMusic ? 1.2 : 0.15)
+        let isBGM = currentlyPlaying?.isBackgroundMusic ?? false
+        let fade = fadeDuration ?? (isBGM ? 1.2 : 0.15)
         effectLimitTimer?.invalidate()
         effectLimitTimer = nil
         playbackTimer?.invalidate()
         playbackTimer = nil
+        playStartedAt = nil
         fadeOutAndStop(audioPlayer, fadeDuration: fade)
         audioPlayer = nil
         soundDuration = 0
@@ -209,10 +228,17 @@ final class AudioManager {
 
     private func startPlaybackTimer() {
         playbackTimer?.invalidate()
-        let timer = Timer(timeInterval: 0.1, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 0.05, repeats: true) { [weak self] _ in
             guard let self, let player = self.audioPlayer else { return }
-            self.soundCurrentTime = player.currentTime
-            if !player.isPlaying {
+            // 짧은 소리는 반복 재생되므로 player.currentTime은 계속 0으로 돌아간다
+            // → 실제 흐른 시간으로 진행 바를 채운다
+            if let start = self.playStartedAt {
+                self.soundCurrentTime = min(Date().timeIntervalSince(start), self.soundDuration)
+            } else {
+                self.soundCurrentTime = player.currentTime
+            }
+            // 반복하지 않는 소리가 제한 시간보다 먼저 끝난 경우 (안전장치)
+            if !player.isPlaying, player.numberOfLoops == 0 {
                 self.stop()
             }
         }
@@ -222,18 +248,33 @@ final class AudioManager {
     }
 
     func seekSound(to time: TimeInterval) {
-        audioPlayer?.currentTime = time
+        guard let player = audioPlayer else { return }
+        // 파일보다 긴 목표 길이(반복 재생) 안에서의 이동 — 파일 안 위치로 접어서 넘긴다
+        player.currentTime = player.duration > 0 ? time.truncatingRemainder(dividingBy: player.duration) : 0
+        playStartedAt = Date().addingTimeInterval(-time)
         soundCurrentTime = time
     }
     
     func selectMood(_ mood: SoundMood?) {
         withAnimation(.easeInOut(duration: 0.25)) {
+            showBackgroundMusicOnly = false
             if selectedMood?.id == mood?.id {
                 selectedMood = nil
                 stopBGM()
             } else {
                 selectedMood = mood
                 playBGM(mood)
+            }
+        }
+    }
+
+    /// 🎼 배경음악 카테고리 — 무드 필터와 배타적이고, 무드 BGM은 꺼 준다
+    func toggleBackgroundMusicCategory() {
+        withAnimation(.easeInOut(duration: 0.25)) {
+            showBackgroundMusicOnly.toggle()
+            if showBackgroundMusicOnly {
+                selectedMood = nil
+                stopBGM()
             }
         }
     }
@@ -255,30 +296,18 @@ final class AudioManager {
                 player.prepareToPlay()
                 bgmPlayerCache[fileName] = player
             }
-            player.numberOfLoops = -1  // 루프 (10초 제한 타이머가 정리)
+            player.numberOfLoops = -1  // 무드를 끌 때까지 계속 흐른다
             player.volume = bgmVolume
             player.play()
             bgmPlayer = player
-            scheduleBGMLimit()
             withAnimation { isBGMPlaying = true }
         } catch {
             print("BGM error: \(error)")
         }
     }
 
-    /// 무드 BGM도 10초 제한 — 8초에 페이드를 시작해 10초 안에 사라짐
-    private func scheduleBGMLimit() {
-        bgmLimitTimer?.invalidate()
-        let timer = Timer(timeInterval: 8.0, repeats: false) { [weak self] _ in
-            self?.stopBGM(fadeDuration: 2.0)
-        }
-        bgmLimitTimer = timer
-        RunLoop.main.add(timer, forMode: .common)
-    }
-
-    func stopBGM(fadeDuration: TimeInterval = 0.4) {
-        bgmLimitTimer?.invalidate()
-        bgmLimitTimer = nil
+    /// 무드 BGM은 시간 제한 없이 — 무드 칩을 다시 눌러 끌 때까지 흐른다
+    func stopBGM(fadeDuration: TimeInterval = 1.5) {
         fadeOutAndStop(bgmPlayer, fadeDuration: fadeDuration)
         bgmPlayer = nil
         withAnimation { isBGMPlaying = false }
