@@ -47,9 +47,9 @@
 		AA100015 /* SoundMood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundMood.swift; sourceTree = "<group>"; };
 		AA100016 /* SoundImages */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SoundImages; sourceTree = "<group>"; };
 		AA100017 /* StoryScript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryScript.swift; sourceTree = "<group>"; };
-		AA100020 /* StoryCustomizationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCustomizationStore.swift; sourceTree = "<group>"; };
 		AA100018 /* StoryModeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryModeManager.swift; sourceTree = "<group>"; };
 		AA100019 /* StoryModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryModeView.swift; sourceTree = "<group>"; };
+		AA100020 /* StoryCustomizationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCustomizationStore.swift; sourceTree = "<group>"; };
 		AA200001 /* StoryMood.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoryMood.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA200002 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -313,7 +313,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.gaebalja.StoryMood;
+				PRODUCT_BUNDLE_IDENTIFIER = com.leeo.StoryMood;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -347,7 +347,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.gaebalja.StoryMood;
+				PRODUCT_BUNDLE_IDENTIFIER = com.leeo.StoryMood;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
